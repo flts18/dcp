@@ -1,0 +1,508 @@
+<script src="<?php echo base_url(); ?>style/js/lumino.glyphs.js"></script>
+<link href="<?php echo base_url(); ?>style/css/animate.css" rel="stylesheet">
+<link href="<?php echo base_url(); ?>style/css/morris.css" rel="stylesheet">
+<script src="<?php echo base_url(); ?>style/js/easypiechart.js"></script>
+<script src="<?php echo base_url(); ?>style/js/easypiechart-data.js"></script>
+<script src="<?php echo base_url(); ?>style/js/chart.min.js"></script>
+<script src="<?php echo base_url(); ?>style/js/fusioncharts.js"></script>
+<script src="<?php echo base_url(); ?>style/js/fusioncharts.theme.fint.js"></script>
+<script src="<?php echo base_url(); ?>style/js/price-range.js"></script>
+
+<script>
+		!function ($) {
+		    $(document).on("click","ul.nav li.parent > a > span.icon", function(){          
+		        $(this).find('em:first').toggleClass("glyphicon-minus");      
+		    }); 
+		    $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+		}(window.jQuery);
+
+		$(window).on('resize', function () {
+		  if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+		})
+		$(window).on('resize', function () {
+		  if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+		})
+	</script>	
+	<style>
+	
+	.starbtn,.starrr_disable { color: #ea0421; font-size: 16px;}
+	
+	.large {
+    font-size: 18px;
+}
+
+ 
+.table>thead:first-child>tr:first-child>th,
+.table>thead>tr>th, 
+.table>tbody>tr>th, 
+.table>tfoot>tr>th 
+ {
+	*border: 3px solid #bdc3c7;
+    border: 1px solid #BFBFBF;
+	*color:#e74c3c;
+	font-size:13px;
+	*border:none;
+	padding:5px;
+	font-weight:bold;
+	color:black;
+	background: #d3d3d3;
+}
+
+.table>thead>tr>td, 
+.table>tbody>tr>td, 
+.table>tfoot>tr>td{
+border: 1px solid #BFBFBF;
+  *background: #708090;
+  background: white;
+  padding:5px;
+  *font-size:10px;
+  *color:#fff;
+  color:black;
+  font-weight:lighter;
+}
+
+td:hover{
+  background: #708090;
+  background: white;
+  *color:#fff;
+  color:black;
+} 
+.dash{
+	font-family:'verdana';
+	word-spacing:1px;
+	color:#0000FF;
+}
+.new
+  {
+	font-family:Comic Sans MS;
+	font-size:9px;
+	color:red;	
+	font-weight:bold;
+  }
+
+  .pr_meter_head
+  {
+	position:relative;	
+	padding:5px 10px;
+	margin-bottom:5px;
+
+  }
+
+  .dashboard_head
+  {
+	position:relative;	
+	
+  }
+
+	</style>
+	
+	<div class="col-lg-12 main dashboard_head" *style="border:1px solid red;">
+		<h4 class="dash"><span class="label" style="color: darkslateblue;font-size:18px;">DASHBOARD</span><span class="label label-pink pull-right" style="color: mediumseagreen;font-size:18px;">Rendered time:<?php echo $this->benchmark->elapsed_time();?> s</span></h4>
+		
+		<div class="row col-md-13">
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-blue panel-widget shadow">
+					<div class="row no-padding"><a href="<?php echo base_url().'letter_inbox' ?>">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked download"><use xlink:href="#stroked-download"></use></svg>
+						</div></a>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large"><?php echo letter_inbox_count() ;?></div>
+							<div class="text-muted small" style="color:#CC0000"><b>Receive Letters</b></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-orange panel-widget shadow">
+					<div class="row no-padding"><a href="<?php echo base_url().'home_controller/sent_letters' ?>">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked upload"><use xlink:href="#stroked-upload"></use></svg>
+						</div></a>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large"><?php echo $my_sent ;?></div>
+							<div class="text-muted small" style="color:#0033CC"><b>Sent Letters</b></div>
+						</div>
+					</div>
+				</div>
+			</div>
+				<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-red panel-widget shadow">
+					<div class="row no-padding"><a href="<?php echo base_url().'actionable_letter/my_pending' ?>">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked open letter"><use xlink:href="#stroked-open-letter"></use></svg>
+						</div></a>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large" style="color:#996600"><b><?php echo $my_pending; ?></b></div>
+							<div class="text-muted"><div class="small" style="color:#00C78C"><b>Tasks/ Requests</b></div></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-3">
+				<div class="panel panel-teal panel-widget shadow">
+					<div class="row no-padding"><a href="<?php echo base_url().'home_controller/login_users' ?>">
+						<div class="col-sm-3 col-lg-5 widget-left">
+							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
+						</div></a>
+						<div class="col-sm-9 col-lg-7 widget-right">
+							<div class="large"><?php echo $results['count'] ;?>/<?php echo $total_user ;?></div>
+							<div class="text-muted small" style="color:#C67171"><b>Total Users</b></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+<div class="" *style="*margin-top:-25px;border:1px solid red;">
+
+			
+			
+			
+			
+		</div>
+	</div>
+
+
+<div class="col-lg-12  main" *style="border:1px solid red;">	
+
+
+	<div class="row col-md-13">
+		<div class="col-lg-6" *style="border:1px solid red;">
+			<div class="panel panel-primary shadow">
+				<div class="orange_panel shadow">
+						Your pending task for today
+					</div>
+					<div class="panel-body">
+						<table class="dataTable display responsive" width="100%">
+						    <thead>
+						    <tr>
+						        <!-- <th data-checkbox="true"></th> -->
+						        <th class="th-color" data-sortable="true">Memo No.</th>
+						        <th class="th-color" data-sortable="true">Issue Date</th>
+						        <!-- <th data-sortable="true">Action Status</th> -->
+								<th class="th-color" data-sortable="true">Action Given By</th>
+								<th class="th-color" data-sortable="true">Action Details</th>
+								<th class="th-color">Action Status</th>
+								
+						    </tr>
+						    </thead>
+
+							<tbody>
+					<?php foreach($to_do_list as $value){
+					    $starGivenUserRank = fetch_rank($value["star_given_by"]);
+						?>
+							<tr>
+						        <!-- <td><input type="checkbox"></td> -->
+						        
+						        <td data-sortable="true" class="strikethrough"><?php $this->load->helper('text'); echo(word_limiter($value['subject'], 4) .'<br> (');?><a href="<?php echo base_url().'pdf_resource/files/'.$value['letter_name'];?>" target="_blank" style="color:green; font-weight:normal;"><?php  echo($value['memo_no'].')');?></a>
+						        
+						        <?php if($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank < $starGivenUserRank){ ?>
+									<div class="starrr starrr_disable" data-rating='<?php echo $value["star_mark"]; ?>' title="Rating given by <?php  echo $value["ratingGivenUser"];?>"></div>
+								  <?php } elseif($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank >= $starGivenUserRank) { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>" data-rating='<?php echo $value["star_mark"]; ?>'></div>
+								  <?php } else { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>"></div>
+								<?php } ?>
+								
+						        </td>
+						        <td data-sortable="true"><?php echo db_dt_format($value['issue_dt']);?></td>
+						        <!-- <td data-sortable="true"><?php echo $value['action_status'];?></td> -->
+								<td data-sortable="true"><?php echo fetch_user_name($value['action_sender']);?></td>
+								<td data-sortable="true"><?php if($value["deadline_dt"]!="0000-00-00") echo '<span style="color :'.date_color($value["deadline_dt"]). '">'; ?><?php echo $value['action_details'];?><?php echo'</span>';?></td>
+						    	<td><label class="status" id="<?php echo $value['action_id'] ;?>"><?php if($value['action_status']=='P'){echo'<span style="color:red">Pending</span>';}else if($value['action_status']=='C'){echo '<span style="color:green">Completed</span>';}else if($value['action_status']=='AT'){echo '<span style="color:green">Action Taken</span>';}?></label></td>
+						    	
+						    </tr>
+
+							<?php } ?>
+
+							
+
+						    </tbody>
+						</table>
+						<?php //if(count($to_do_list)==0) echo"Presently no task found.";?>
+					</div>
+				</div>
+		</div>
+			
+			<?php if($this->session->userdata('user_type')=="super_user"){ ?>
+			
+			<div class="col-lg-6" *style="border:1px solid red;">
+			<div class="panel panel-primary shadow">
+				<div class="green_panel shadow">
+						List of Task given for today
+					</div>
+			    	<div class="panel-body">
+						<table class="dataTable display responsive" width="100%">
+						    <thead>
+						    <tr >
+						        <!-- <th data-checkbox="true"></th> -->
+						        <th data-sortable="true" >Memo No.</th>
+						        <th data-sortable="true">Issue Date</th>
+						        <!-- <th data-sortable="true">Action Status</th> -->
+								<th data-sortable="true">Action Given To</th>
+								<th data-sortable="true">Action Details</th>
+								<th>Action Status</th>
+								<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-ok" ></i></th>
+						    </tr>
+						    <thead>
+
+							<tbody>
+					<?php foreach($action_given as $value){
+						$starGivenUserRank = fetch_rank($value["star_given_by"]);
+						?>
+							<tr>
+						        <!-- <td><input type="checkbox"></td> -->
+						        
+						        <td data-sortable="true" class="strikethrough"><?php $this->load->helper('text'); echo(word_limiter($value['subject'], 4) .'<br> (');?><a href="<?php echo base_url().'pdf_resource/files/'.$value['letter_name'];?>" target="_blank" style="color:green; font-weight:normal;"><?php echo ($value['memo_no'].')');?></a>
+						        
+						        <?php if($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank < $starGivenUserRank){ ?>
+									<div class="starrr starrr_disable" data-rating='<?php echo $value["star_mark"]; ?>' title="Rating given by <?php  echo $value["ratingGivenUser"];?>"></div>
+								  <?php } elseif($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank >= $starGivenUserRank) { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>" data-rating='<?php echo $value["star_mark"]; ?>'></div>
+								  <?php } else { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>"></div>
+								<?php } ?>
+								
+						        </td>
+						        <td data-sortable="true"><?php echo db_dt_format($value['issue_dt']);?></td>
+						        <!-- <td data-sortable="true"><?php echo $value['action_status'];?></td> -->
+								<td data-sortable="true"><?php echo $value["name"];?></td>
+								<td data-sortable="true"><?php if($value["deadline_dt"]!="0000-00-00") echo '<span style="color :'.date_color($value["deadline_dt"]). '">'; ?><?php echo $value['action_details'];?><?php echo'</span>';?></td>
+						    	<td><span  ><?php if($value['action_status']=='P'){echo'<span style="color:red">Pending</span>';}else if($value['action_status']=='C'){echo '<span style="color:green">Completed</span>';}else if($value['action_status']=='AT'){echo '<span style="color:green">Action Taken</span>';}?></span></td>
+						    	<td data-sortable="true"><label class="accept_status" id="<?php echo $value['action_id'] ;?>"><?php  if($value['action_status']=='AT'){echo'<span style="color:red">Accept</span>';}else if($value['action_status']=='C'){echo '<span style="color:green">Accepted</label>';} ?></label></td>
+						    </tr>
+
+							<?php } ?>
+
+							
+
+						    </tbody>
+						</table>
+						<?php if(count($action_given)==0) echo"Presently no task found.";?>
+					</div>
+				</div>
+			</div></div>
+			<?php }?>
+
+<div class="row col-lg-13">
+			<div class="col-lg-6" *style="border:1px solid red;">
+			<div class="panel panel-primary shadow">
+				<div class="red_panel shadow">
+						<!-- Super Users currently using FLTS -->
+
+						Your Upcoming Task 
+					</div>
+					<div class="panel-body">
+						<table class="dataTable display responsive" width="100%">
+						    <thead>
+						    <tr>
+						        
+						        <th data-sortable="true">Memo No.</th>
+						        <th data-sortable="true">Issue Date</th>
+								<th data-sortable="true">Action Given By</th>
+						        <th data-sortable="true">Action Details</th>
+								<th data-sortable="true">Deadline Date</th>
+						        
+						    </tr>
+						    </thead>
+
+							<tbody>
+
+
+							
+							<?php foreach($my_upcoming_task as $value){?>
+							
+							<tr>
+								<td data-sortable="true" class="strikethrough"><?php $this->load->helper('text'); echo(word_limiter($value['subject'], 4) .'<br> (');?><a href="<?php echo base_url().'pdf_resource/files/'.$value['letter_name'];?>" target="_blank" style="color:green; font-weight:normal;"><?php echo( $value['memo_no'].')');?></a></td>
+								<td><?php echo db_dt_format($value['issue_dt']); ?></td>
+								<td><?php echo fetch_user_name($value['sender_id']);?></td>
+								<td><?php echo $value['action_details']; ?></td>
+								<td><?php echo db_dt_format($value['deadline_dt']); ?></td>										
+							</tr>
+							<?php } ?>
+							
+							
+							
+
+							
+
+						    </tbody>
+						</table>
+					</div>
+				</div>
+				</div>
+			
+			
+			<?php if($this->session->userdata('user_type')=="super_user"){ ?>
+			<div class="col-lg-6" *style="border:1px solid red;">
+			<div class="panel panel-primary shadow">
+				<div class="red_panel shadow">
+						<!-- Section Using FLTS -->
+						Upcoming Tasks Given
+					</div>
+					<div class="panel-body">
+						<table class="dataTable display responsive" width="100%">
+						    <thead>
+						    <tr>
+						        
+						         <th data-sortable="true">Memo No.</th>
+						        <th data-sortable="true">Issue Date</th>
+								<th data-sortable="true">Action Given To</th>
+						        <th data-sortable="true">Action Details</th>
+								<th data-sortable="true">Action Status</th>
+								<th data-sortable="true">Deadline Given</th>
+						    </tr>
+						    </thead>
+			
+							<tbody>
+	
+								<?php foreach($upcoming_task as $value){
+									
+									$starGivenUserRank = fetch_rank($value["star_given_by"]);
+								?>
+							<tr>
+								<td data-sortable="true" class="strikethrough"><?php $this->load->helper('text'); echo(word_limiter($value['subject'], 4) .'<br> (');?><a href="<?php echo base_url().'pdf_resource/files/'.$value['letter_name'];?>" target="_blank" style="color:green; font-weight:normal;"><?php echo($value['memo_no'].')');?></a>
+								<?php if($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank < $starGivenUserRank){ ?>
+									<div class="starrr starrr_disable" data-rating='<?php echo $value["star_mark"]; ?>' title="Rating given by <?php  echo $value["ratingGivenUser"];?>"></div>
+								  <?php } elseif($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank >= $starGivenUserRank) { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>" data-rating='<?php echo $value["star_mark"]; ?>'></div>
+								  <?php } else { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>"></div>
+								<?php } ?>
+								</td>
+								<td><?php echo db_dt_format($value['issue_dt']);?></td>
+								<td><?php echo $value['name'];?></td>
+								<td><?php echo $value['action_details'];?></td>
+							
+								<td><span  ><?php if($value['action_status']=='P'){echo'<span style="color:red">Pending</span>';}else if($value['action_status']=='C'){echo '<span style="color:green">Completed</span>';}else if($value['action_status']=='AT'){echo '<span style="color:green">Action Taken</span>';}?></span></td>
+								<td><?php echo db_dt_format($value['deadline_dt']);?></td>
+							</tr>
+							<?php } ?>
+								
+								
+
+
+								
+			
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<?php }?>
+		</div><!--/.row-->
+	
+
+	
+		
+
+
+
+
+
+		
+		  <input type="hidden" id="base_url" value="<?php echo base_url()?>">
+</div>
+
+
+
+
+
+<script src="<?php echo base_url(); ?>style/js/morris.min.js"></script>
+<script src="<?php echo base_url(); ?>style/js/raphael-min.js"></script>
+<script src="<?php echo base_url(); ?>style/js/chart.min.js"></script>
+
+<script src='<?php echo base_url(); ?>style/js/rating.js'></script>
+
+ <script type="text/javascript">
+
+$( document ).ready(function() {
+	
+	$('.dataTable').dataTable({ "lengthMenu": [ 5, 10, 25, 50, 75, 100 ],
+		"pageLength": 5});
+	
+	$('.starrr_disable').unbind();
+	$('.starbtn').on('starrr:change', function(e, value){
+		
+		var base_url='<?php echo base_url(); ?>';
+		var dataId=$(this).attr('data-id');
+		var url=base_url+"file_inbox/setRatingFileInbox/";
+		$.ajax({url:url, 
+			type:'post',
+			data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo 	$this->security->get_csrf_hash(); ?>',dataId:dataId,ratingVal:value},
+			success: function(result){
+			}
+		});
+	});
+});
+
+$(document).on('click', '.pending', function(){	
+
+    var idd='#shpanel'+$(this).attr("id");
+	
+      $('.shpanel').not($(idd)).slideUp(800);
+		$(idd).slideToggle();
+		
+});
+
+$(document).on('click', '.next_date', function(){
+      var base_url=$("#base_url").val();
+	  var nxt_dt=($("#nxt_dt"+$(this).attr("id")).val());
+	 // alert(nxt_dt);
+	  var act_name=($("#act_name").val());
+     var id=$(this).attr("id");
+     //alert(nxt_dt);
+      var url=base_url+"Letter_inbox/letter_status_postpond/";
+      $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id,act_name:act_name,nxt_dt:nxt_dt},
+           success: function(result){
+			$('.shpanel').not($(idd)).slideUp(800);   
+         $("#"+id).html(result);
+    }});
+     
+  });
+
+
+			$(document).on('click', '.status', function(){
+			    
+			      var base_url=$("#base_url").val();
+			     var id=$(this).attr("id");
+			     
+			      var url=base_url+"Letter_inbox/letter_action_status/";
+			      $.ajax({url:url, 
+			           type:'post',
+			           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id},
+			          
+			           success: function(result){
+			           
+			         $("#"+id).html(result);
+			    }});
+			     
+			  });
+			
+
+			
+			
+			$(document).on('click', '.accept_status', function(){
+			    
+			      var base_url=$("#base_url").val();
+			     var id=$(this).attr("id");
+
+			      var url=base_url+"Letter_inbox/letter_status_accept/";
+			      $.ajax({url:url, 
+			           type:'post',
+			           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id},
+			           success: function(result){
+			         $("#"+id).html(result);
+			    }});
+			     
+			  });
+
+			</script>
+			
+
+			

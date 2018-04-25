@@ -1,0 +1,215 @@
+<?php 
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Home_controller extends MY_Controller {
+
+    public $user_details="";
+	function __construct()
+    {
+	parent::__construct();
+	$this->load->library("pagination");
+	$this->load->model(array('Letter_model','Dashboard_model','User_model'));
+    //$this->user_details=check_user_page_access();
+    //print_r($this->user_details);exit;
+    }
+
+
+	public function index()
+	{
+		
+		//$this->user_details=check_user_page_access();
+		$data['active']='home_page';
+	    
+		
+		
+
+		$acces_sec=$this->User_model->usr_acc_section();
+		$acces_sec=explode(",",$acces_sec[0]['access_section']);
+
+		//$data["rec_pending"]=$this->Dashboard_model->section_pletter($acces_sec);
+		//$data["move_pending"]=$this->Dashboard_model->recv_pletter($acces_sec);
+		//$data['active_user']=$this->Dashboard_model->active_user();
+		//$data['mypending']=$this->Letter_model->user_letter_percent();
+		//$data['register_letter']=$this->Letter_model->user_register_letter_percent();
+		//$data['action_pending']=$this->Letter_model->action_pending();
+		
+		
+		
+			$data['login_time']=$this->Dashboard_model->login_time($this->session->userdata('user_id'));
+			//$data['act_req']=$this->Dashboard_model->action_req_count();
+			
+			$data['total_user']=$this->Dashboard_model->total_user();
+			$data['results']=$this->Dashboard_model->active_user_dash();
+			$data['my_pending']=$this->Letter_model->count_all_pending_list();
+			$data['my_sent']=$this->Dashboard_model->sent_letter($this->session->userdata('user_id'));
+			
+			$data['upcoming_task']=$this->Dashboard_model->fetch_action_sent_upcoming();
+			$data['my_upcoming_task']=$this->Dashboard_model->upcoming_my_task();
+			$data['action_given']=$this->Dashboard_model->fetch_action_sent();
+			$data['to_do_list']=$this->Dashboard_model->to_do_list();
+            
+            if($this->session->userdata('user_type')=="super_user")
+			{
+				$data['final_report_display'] = $this->Dashboard_model->final_report_display();
+				
+				$data['action_taken_display'] = $this->Dashboard_model->action_taken_display();
+				
+				
+				
+			}
+			
+		    $data['currentUserRank'] = fetch_rank($this->session->userdata('user_id'));
+			//echo '<pre>'; print_r($data); die;
+			$content=$this->load->view('front_page/letter_front_page',$data,true);
+			render($content);
+		
+		
+		}
+	
+	
+	
+	
+	
+	public function activeInactiveUserView()
+	{
+		$userSections = $this->Dashboard_model->userSections();
+		$activeInactiveRecords = $this->Dashboard_model->activeInactiveRecords($userSections);
+		if(isset($activeInactiveRecords['totalActiveResults']))
+		{
+			$data['activeRecords'] = $activeInactiveRecords['totalActiveResults'];
+		}
+		if(isset($activeInactiveRecords['totalInactiveResults']))
+		{
+			$data['inactiveRecords'] = $activeInactiveRecords['totalInactiveResults'];
+		}
+		//echo '<pre>'; print_r($activeInactiveRecords); die;
+		
+		$data['active']='active_inactive_users';
+		
+		$content=$this->load->view('front_page/letter_front_page_ajax',$data,true);
+		render($content); 
+		
+	}
+	
+	public function dashboard_ajax()
+	{
+		if($this->input->post('loadfirst', TRUE))
+		{
+			$data['display'] = 1;
+			
+			
+			$data['login_time']=$this->Dashboard_model->login_time($this->session->userdata('user_id'));
+			
+			$data['total_user']=$this->Dashboard_model->total_user();
+			$data['results']=$this->Dashboard_model->active_user();
+			$data['my_pending']=$this->Letter_model->count_all_pending_list();
+			$data['my_sent']=$this->Dashboard_model->sent_letter($this->session->userdata('user_id'));
+			
+			echo $this->load->view('front_page/letter_front_page_ajax',$data,true);
+		} elseif($this->input->post('loadsecond', TRUE)){
+			$data['display'] = 2;
+			
+			$data['upcoming_task']=$this->Dashboard_model->fetch_action_sent_upcoming();
+			$data['my_upcoming_task']=$this->Dashboard_model->upcoming_my_task();
+			$data['action_given']=$this->Dashboard_model->fetch_action_sent();
+			$data['to_do_list']=$this->Dashboard_model->to_do_list();
+			
+			echo $this->load->view('front_page/letter_front_page_ajax',$data,true);
+		}
+	}
+
+    
+	
+	public function sent_letters()
+	{
+		$data['results']=$this->Dashboard_model->sent_letters();
+		
+		$data['currentUserRank'] = fetch_rank($this->session->userdata('user_id'));
+		
+		$content=$this->load->view('pending_letter/sent_letter',$data,true);
+		render($content);
+	}
+	
+	
+	
+	public function lettertraking()
+	{
+		
+		$this->session->set_userdata('file_letter', 'letter');
+		$this->index();
+		//redirect('home_controller');
+		//render($content);
+	}
+
+	public function login_users()
+	{
+	    $this->Dashboard_model->chk_actv_user();
+		$data['results']=$this->Dashboard_model->active_user();
+		//$data['count']=count($data['results']);
+		//print_r($data['count']);exit;
+		$content=$this->load->view('login/login_users',$data,true);
+		render($content);
+	}
+
+	public function action_notifcation()
+	{
+
+		// check_user_page_access();
+		
+		 $data['action_notifcation']=$this->Letter_model->action_notifcation();
+		 $data['notifcation_count']=$this->Letter_model->action_notifcation_count();
+	     echo $this->load->view('notification/notification',$data,true);
+		exit;
+	}
+
+
+	public function sectionwise_pending_letter($sec_id)
+	{
+
+		// check_user_page_access();
+		
+		 $config = array();
+        $config["base_url"] = base_url() . "home_controller/sectionwise_pending_letter/".$sec_id;
+        $config["total_rows"] = $this->Letter_model->section_pending_letter_count($sec_id);
+        $config["per_page"] = 11;
+        $config["uri_segment"] = 4;
+        //config for bootstrap pagination class integration
+        $config['full_tag_open'] = '<ul class="pagination">';
+        $config['full_tag_close'] = '</ul>';
+        $config['first_link'] = false;
+        $config['last_link'] = false;
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['prev_link'] = '&laquo';
+        $config['prev_tag_open'] = '<li class="prev">';
+        $config['prev_tag_close'] = '</li>';
+        $config['next_link'] = '&raquo';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+
+
+        $this->pagination->initialize($config);
+
+        $page = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
+
+
+        $data["results"] = $this->Letter_model->section_pending_letter($sec_id,$config["per_page"], $page);
+        $data["links"] = $this->pagination->create_links();
+        $data['section_name']=trim($this->Letter_model->section_name($sec_id),',');
+       // $data['active']='letter_inbox_page';
+        $content=$this->load->view('front_page/sectionwise_pending_letter',$data,true);
+        render($content);
+
+
+		
+	}
+		
+	
+}
+?>

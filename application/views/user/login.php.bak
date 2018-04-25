@@ -1,0 +1,153 @@
+<html>
+<head>
+
+<link href="<?php echo base_url(); ?>style/login_custom/custom_login_style.css" rel="stylesheet" />
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="<?php echo base_url(); ?>style/images/fts.png" type="image/gif" >
+<title>FLTS</title>
+</head>
+<body class="">
+<div id="">
+<div id="main-container">
+<div id="page-wrap">
+
+<div id="video-background-1" >
+
+<div class="ui--video-background-video hidden-phone video-container">
+<video autoplay="autoplay" class="fillWidth fadeIn animated" loop="loop" muted="muted" ><source src="<?php echo base_url(); ?>style/images/finalnew.mp4" type="video/mp4"/></video>
+</div>
+
+
+<div class="ui--section-content container clearfix content videoUpper_Texture">
+<div class="ui--animation-in make--fx--flipIn-X ui--pass clearfix " data-fx="fx--flipIn-X" data-delay="200" data-start-delay="0">
+<div class="ui-row row">
+<div class="ui-column span3">
+</div>
+<div class="ui-column span7">
+	<div class="ui--icon-box position--top">
+		<span class="ui--icon-box-icon ui--animation cid_logo">
+			<img src="<?php echo base_url(); ?>style/images/Cid_logo.png" style="height:140px;width:140px;">
+		</span>
+	</div>
+
+	<div class="file">
+	<h1 id="custom-title-h1-1" class="ui--animation " style="text-align: center; margin-bottom: 0px; ">
+	<strong style="color: #1fc4f0;">File</strong><strong> & Letter Tracking System</strong>
+	</h1></div>
+
+<div class="files">
+	<h4 id="custom-title-h4-1" class="fx--flipIn-X ui--animation-fire" style="text-align: center;font-size: 16px;font-weight: 100;" delay="400">A Web Based Tracking System for Letters &amp; Files</h4></div>
+</div>
+
+</div>
+<div class="ui--space clearfix" ></div>
+<div class="ui-row row">
+<div class="ui-column span4">
+</div>
+<div class="ui-column span5">
+<div class="ui--custom-login ui--pass">
+<div id="login-form-container" class="ui--custom-login login-form-container ">
+	<?php echo form_open('user/login',"class='login-form form-horizontal ui-row'");?>
+	
+	<div class="form-elements form_dsg">
+		<div class="ui-row row">
+			<p class="control-group">
+				<label class="control-label ui--animation" for="user_login">Username</label>
+				<span class="controls ui--animation">
+					<input tabindex="100" type="text" autocomplete="off" class="input-text transparent-input" id="username" name="username" value=""/>
+				</span>
+			</p>
+
+
+			<p class="control-group">
+				<label class="control-label ui--animation" for="user_pass">Password</label>
+				<span class="controls ui--animation">
+					<input tabindex="101" class="input-text transparent-input" type="password" autocomplete="off" id="pwd" name="pwd"/>
+				</span>
+			</p>
+
+
+			<p class="control-group captcha_dsg">
+			
+
+
+				<span class="ui--animation" id="captImg" style="width:150px;*margin-left: 268px; margin-top: -66px;">
+					<?php echo $captchaImg; ?>
+				</span>
+
+				
+				<a href="javascript:void(0);" class="refreshCaptcha ui--animation" ><img style="margin: -1px 0 0 20px;" src="<?php echo base_url().'style/images/refresh.png'; ?>"/></a>
+				
+
+				
+				<span class="controls ui--animation" style="margin:-47px 0 0 200px;width:170px;">
+				<input tabindex="101" class="input-text transparent-input" type="text" name="captcha_fld" id="captcha_fld"/>
+				</span>
+			</p>
+			<p class="control-group">
+			  <center><span style="color:red"><?php echo $this->session->flashdata('error_message'); ?></span></center>
+			</p>
+			<p class="control-group">
+				  <center><span style="color:green"><?php echo $this->session->flashdata('success_message'); ?></span></center>
+			</p>
+
+		</div>
+	</div>
+
+	<div class="custom-login-form-actions clearfix">
+		<p class="control-group pull-left">	
+		<button type="submit" class="ui--animation btn btn-primary" tabindex="102" name="wpt_login" value="Login" >Login</button>
+		</p>
+	</div>
+</form>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+<script src="<?php echo base_url(); ?>style/js/jquery-1.11.1.min.js"></script>
+  <script>
+  loginCaptcha();
+    
+    $(document).ready(function(){
+        $('.refreshCaptcha').on('click', function(){
+			
+			loginCaptcha();
+		});
+		
+    });
+    
+    
+    function loginCaptcha()
+    {
+        
+        var url= "<?php echo base_url().'main_controller/captcharefresh' ?>";
+				$.ajax({url:url, 
+				   type:'post',
+				   data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'},
+					success: function(result){
+					
+						$('#captImg').html(result);
+					}
+			});
+    }
+    
+    </script>
+<script type="text/javascript" defer src="<?php echo base_url(); ?>style/js/autoptimize.js"></script>
+</body>
+</html>

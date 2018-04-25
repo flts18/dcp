@@ -1,0 +1,107 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Main_controller extends CI_Controller {
+
+    function __construct() {
+        parent::__construct();
+		
+		$this->load->helper('captcha');
+        $this->log_check();
+		$this->output->delete_cache();
+    }
+	public function index()
+	{ 
+		/**if($this->session->userdata('user_id')!='')
+        { 
+            redirect('home_controller');
+			exit;
+        }**/
+		
+	    /** define the directory **/
+		//$dir = "captcha_images/";
+
+		/*** cycle through all files in the directory ***/
+		//foreach (glob($dir."*") as $file) {
+
+		/*** if file is 24 hours (86400 seconds) old then delete it ***/
+		//if(time() - filectime($file) > 3600){
+			//unlink($file);
+			//}
+		//}
+		// Captcha configuration
+        
+		//$this->load->library('antispam');
+		/**$configs = array(
+				'img_path'      => 'captcha_images/',
+				'img_url'       => base_url().'captcha_images/',
+				'img_height' => '50',
+			);			
+		$captcha = $this->antispam->get_antispam_image($configs);
+        
+        $this->session->unset_userdata('captchaCode');
+        $this->session->set_userdata('captchaCode',$captcha['word']);**/
+        
+        $data['captchaImg'] = '';
+		
+		$this->load->view('user/login',$data);
+	}
+	
+	public function captcharefresh(){
+		
+		/**if($this->session->userdata('user_id')!='')
+        { 
+            redirect('home_controller');
+			exit;
+        }**/
+		
+        // Captcha configuration
+        
+		$this->load->library('antispam');
+		$configs = array(
+				'img_path'      => 'captcha_images/',
+				'img_url'       => base_url().'captcha_images/',
+				'img_height' => '50',
+			);			
+		$captcha = $this->antispam->get_antispam_image($configs);
+		$this->session->unset_userdata('captchaCode');
+        $this->session->set_userdata('captchaCode',$captcha['word']);
+        
+        echo $captcha['image'];exit;
+    }
+
+public function log_check()
+	{
+		
+	$this->load->dbutil();
+	$this->load->helper('file');
+    // $month_p=date('m');
+    // $yr_p=date('Y');
+    // $my_p=$month_p.'-'.$yr_p;
+    $month=(date('m')-1)==0 ? 12 : (date('m')-1);
+    $yr=(date('m')-1)==0 ? date('Y')-1 : date('Y');
+    $my=$month.'-'.$yr;
+   
+         $this->db->select('*');
+         $this->db->from('fts_login_log');
+         $this->db->where('month_year',$my);
+         $query = $this->db->get();
+         $rowcount = $query->num_rows();
+         //print_r($this->db->last_query());
+         
+         if($rowcount){
+            $delimiter = ",";
+             $newline = "\r\n";
+
+                 $data=$this->dbutil->csv_from_result($query,$delimiter, $newline);
+
+                if ( write_file(APPPATH.'../repository/log_backup/'.$my.'.csv', $data,'w'))
+                {
+                        $this->db->delete('fts_login_log',array('month_year'=>$my));
+                }
+         }
+        
+
+  }
+
+}

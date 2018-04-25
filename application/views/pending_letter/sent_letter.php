@@ -1,0 +1,161 @@
+<style>
+.starbtn,.starrr_disable { color: #ea0421; font-size: 16px;}
+</style>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>style/css/jquery.dataTables.min.css">
+<div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+         <div class="panel-heading"><svg class="glyph stroked email"></svg>Sent Papers</div>
+          <div class="panel-body">
+            <div class="canvas-wrapper">
+                    <div class="table-responsive" >          
+                         <table id="editTable">
+                          <thead>
+                            <tr>
+                              
+                              <th>MEMO NO.</th>
+                              <th>SENT TO</th>
+                              <th>ISSUING AUTHORITY</th>
+                              <th>SUBJECT</th>
+                              <th>DATE OF SENDING</th>
+                              
+                              
+                            </tr>
+                          </thead>
+                          
+                           <tbody>
+                            <?php foreach($results as $value){
+							$starGivenUserRank = fetch_rank($value["star_given_by"]);	
+							?>
+                            <tr>
+                              <td><a style="color:green;" href="<?php echo base_url().'pdf_resource/files/'.$value['letter_name'];?>" target="_blank"><?php echo $value["memo_no"];?></a>
+							  
+							  <?php if($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank < $starGivenUserRank){ ?>
+									<div class="starrr starrr_disable" data-rating='<?php echo $value["star_mark"]; ?>' title="Rating given by <?php  echo $value["ratingGivenUser"];?>"></div>
+								  <?php } elseif($value["star_mark"] > 0 && $value["star_given_by"] > 0 && $currentUserRank >= $starGivenUserRank) { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>" data-rating='<?php echo $value["star_mark"]; ?>'></div>
+								  <?php } else { ?> 
+								  <div class="starrr starbtn" data-id="<?php echo $value["letter_id"];?>"></div>
+								<?php } ?>
+							  </td>
+                              <td>
+							  <?php //if($value["action_receiver"] !=0 ) echo fetch_user_name($value["action_receiver"]);
+							   //else if($value["recv_id"] !=0) 
+								   echo fetch_user_name($value["recv_id"]);
+							  
+							  ?></td>
+                              <td><?php echo $value["authority_name"];?></td>
+                              <td><?php echo $value["subject"];?></td>
+                              <td><?php if($value["date_of_action"]!="0000-00-00 00:00:00")echo date("d-m-Y",strtotime($value["date_of_action"]));?></td>
+                              
+                              
+                            </tr>
+                            
+                           <?php } ?>
+                          </tbody>
+                          </table>
+                          </div>
+                    <?php //echo $links;?>
+                    <input type="hidden" id="base_url" value="<?php echo base_url()?>">
+                  </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!--/.row-->
+    <script src='<?php echo base_url(); ?>style/js/rating.js'></script>
+<script>
+
+$( document ).ready(function() {
+	
+	
+	$('#editTable').dataTable({"ordering" : false});
+	
+	$('.starrr_disable').unbind();
+	$('.starbtn').on('starrr:change', function(e, value){
+		/**console.log($(this).attr('data-id'));
+		console.log(value);
+		**/
+		var base_url=$("#base_url").val();
+		var dataId=$(this).attr('data-id');
+		var url=base_url+"file_inbox/setRatingFileInbox/";
+		$.ajax({url:url, 
+			type:'post',
+			data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo 	$this->security->get_csrf_hash(); ?>',dataId:dataId,ratingVal:value},
+			success: function(result){
+			}
+		});
+	});
+});
+</script>
+    <script type="text/javascript">
+
+ $(document).ready(function(){
+    $(".status").click(function(){
+
+      var base_url=$("#base_url").val();
+     var id=$(this).attr("id");
+
+      var url=base_url+"Letter_inbox/letter_action_status/";
+      $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id},
+           success: function(result){
+         $("#"+id).html(result);
+    }});
+     
+  });
+});
+
+ $(document).ready(function(){
+    $(".accept_status").click(function(){
+  
+      var base_url=$("#base_url").val();
+     var id=$(this).attr("id");
+
+      var url=base_url+"Letter_inbox/letter_status_accept/";
+      $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id},
+           success: function(result){
+         $("#"+id).html(result);
+    }});
+     
+  });
+});
+$(document).ready(function(){
+	
+    $(".pending").click(function(){
+		
+    var idd='#shpanel'+$(this).attr("id");
+	//alert(idd);
+      $('.shpanel').not($(idd)).slideUp(800);
+		$(idd).slideToggle();
+		
+		 // $(idd).scrollTo($(idd).right,$(idd).bottom);
+        //$('html,body').animate({scrollTop: $(this).offset().top}, 800); 
+    });
+});
+$(document).ready(function(){
+    $(".next_date").click(function(){
+  var idd='#shpanel'+$(this).attr("id");
+      var base_url=$("#base_url").val();
+	  var nxt_dt=($("#nxt_dt"+$(this).attr("id")).val());
+	 // alert(nxt_dt);
+	  var act_name=($("#act_name"+$(this).attr("id")).val());
+     var id=$(this).attr("id");
+     //alert(act_name);
+      var url=base_url+"Letter_inbox/letter_status_postpond/";
+	 // alert(url);
+      $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',id:id,act_name:act_name,nxt_dt:nxt_dt},
+           success: function(result){
+			$(idd).slideToggle();  
+         $("#"+id).html(result);
+    }});
+     
+  });
+});
+</script>

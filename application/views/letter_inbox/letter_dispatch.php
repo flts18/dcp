@@ -1,0 +1,457 @@
+<style>
+
+.rec_frm
+{
+	margin-left:-25px;
+}
+
+
+.regis_dt
+{
+	margin-left:5px;
+	width:305px;
+}
+
+.txt_width
+{
+	width:305px;
+}
+
+
+
+
+
+	.form_border
+	{
+		
+		border:1px solid #808000;
+		border-radius:10px;
+		padding:25px 0 10px 0;
+		*background-color:#e5ffe5;
+	}
+
+	.form_padding
+	{
+		padding:10px;
+	}
+
+
+.add_width
+{
+	margin-left:-5px;
+	width:230px;
+}
+
+
+.check_margin
+{
+	margin:10px 0 0 -5px;
+}
+
+.radio_margin
+{
+	margin:-45px 0 5px;
+}
+
+</style>
+
+
+<div class="row">
+      <div class="col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading"><svg class="glyph stroked email"></svg>Paper Dispatch</div>
+          <div class="panel-body">
+            <div class="col-md-12">
+              
+                <?php echo validation_errors('<div style="color:red;">','</div>');?>
+                  <div class="form-group">
+                   <span style="color:green"><?php echo $this->session->flashdata('success_message'); ?></span>
+                    </div>
+                  <?php echo form_open_multipart('letter_inbox/dispatch/'.$results[0]["letter_id"],"class='form-horizontal'",array('onsubmit' => 'return check_double_ext();'));?>  
+                 
+					<input type="hidden" name="request_approval" id="request_approval" value="0">
+                  
+                  <div class="form-group col-md-12">
+                    <label for="department" class="col-md-2 control-label">Subject<span style="color:red; font-size:20px">*</span>:</label>
+                     <div class="col-md-4">
+					 <input type="text" class="form-control" id="ref_srl"  value="<?php echo $results[0]["subject"]; ?>" readonly>
+                     <!-- <?php echo $results[0]["subject"]; ?> -->
+                    </div>
+
+					<label for="memo_no" class="col-md-2 control-label">Memo No<span style="color:red; font-size:20px">*</span>:</label>
+                     <div class="col-md-4">
+                     <input type="text" class="form-control" id="memo_no"  value="<?php echo $results[0]["memo_no"]; ?>" readonly>
+                    </div>
+                  </div>
+
+
+
+				  <!-- <div class="form-group col-md-12">
+				                      <label for="reg_dt" class="col-md-2 control-label">Registration Date<span style="color:red; font-size:20px">*</span>:</label>
+				                       <div class="col-md-4 has-success fgdfsg">
+				                       <?php echo $results[0]["reg_dt"]; ?>
+				                      </div>
+				  
+				  					<label for="department" class="col-md-2 control-label">Received from<span style="color:red; font-size:20px">*</span>:</label>
+				                       <div class="has-success fgdfsg">
+				                      <?php echo $desig_name; ?>
+				                    </div> -->
+
+				<div class="form-group">
+						<label for="reg_dt" class="col-md-2 control-label">Registration Date<span style="color:red; font-size:20px">*</span>:</label>
+					<div class="col-md-4">
+						<input type="text" class="form-control regis_dt" id="reg_dt" value="<?php echo $results[0]["reg_dt"]; ?>" readonly>
+					</div>
+
+						<label for="department" class="col-md-2 control-label rec_frm">Received from<span style="color:red; font-size:20px">*</span>:</label>
+					<div class="col-md-4">
+						<input type="text" class="form-control txt_width" id="ref_srl"  value="<?php echo $desig_name; ?>" readonly>
+					</div>
+				</div>
+
+				
+
+
+                
+                 
+                    
+				<div class="form-group col-md-12">
+						<label for="comments" class="col-md-2 control-label">Previous Letter Numbers:</label>
+					<div class="col-md-4">
+					<!-- <textarea spellcheck="true" class="form-control upper-control" id="pre_letter_no" name="pre_letter_no" value="" style="text-transform:uppercase" onblur="upper_str(this)"><?php echo $results[0]['pre_letter_no'];?></textarea> -->
+					<input type="text" class="form-control" spellcheck="true" id="pre_letter_no"  name="pre_letter_no"  style="text-transform:uppercase" onblur="upper_str(this)" value="<?php echo $results[0]['pre_id_no'];?>" readonly>
+						<!-- <?php echo $results[0]['pre_letter_no'];?> -->
+
+					</div>
+				</div>
+					<br><br><br><br>
+
+                    
+			<div class="form_border">
+                   <div class="form-group">
+                    <label for="department" class="col-md-3 control-label">Addressed to <span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <input type="checkbox" value="IN" name="receiver_typeIn" id="receiver_typeIn" onclick="receivertype('receiver_typeIn','.addr-to','designation','user_id')" checked="checked">&nbsp;Internal
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" value="EX" onclick="receivertype('receiver_typeEx','.extrnal-org','receiver_name','receiver_address')" id="receiver_typeEx" name="receiver_typeEx">&nbsp;External / All DDI(s) or OC(s)
+
+                  </div>
+                  </div>
+
+                   <div class="form-group extrnal-org" style="display:none">
+                    <label for="department" class="col-md-3 control-label">Organization <span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <input type="text"  class="form-control extrnal-search" id="receiver_name" name="receiver_name" >
+                    
+                  </div>
+                 <div  class="popup extrnal-hid" style="display:none">
+                        <div class="popuptext" id="extrnal_suggest"></div>
+                 </div>
+                      
+                  </div>
+                   
+                   <div class="form-group extrnal-org" style="display:none">
+                    <label for="" class="col-md-3 control-label">Addressed To<span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <textarea  class="form-control" id="receiver_address" name="receiver_address" ></textarea>
+                    
+                  </div>
+                  </div>
+
+                 <div class="form-group designation addr-to">
+                    <label for="department" class="col-md-3 control-label">Addressed to (Designation)<span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <select class="form-control designation" id="designation" onchange="show_section()" name="designation" required>
+                      <option value="">---Select one---</option>
+                      <?php foreach($designation as $value){ ?>
+                    <option value="<?php echo $value['desig_id']; ?>" ><?php echo $value['desig_name']; ?></option>
+                   <?php }?>
+                   
+                    </select>
+                  </div>
+                  </div>
+
+
+   <div class="form-group sec" style="display:none" id="sub_sec">
+    <label for="department" class="col-md-3 control-label">Section Name:<span style="color:red; font-size:20px">*</span>:</label>
+    <div class="col-md-4 has-success section">
+    <select class="form-control"   id="section" name="section[]">
+      <option value="">-----Select one----</option>
+      <?php if(isset($section_name)) { foreach ($section_name as $value) { ?>
+    <option value="<?php echo $value['sec_id'] ?>" <?php if($value['sec_id']==set_value('section')) echo 'selected'; ?>><?php echo $value['sec_name'] ?></option>
+     <?php } }?>
+     
+    </select>
+  </div>
+  </div>
+                
+                <div class="form-group addr-to">
+                    <label for="user_id" class="col-md-3 control-label">Addressed to (name)<span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <select class="form-control" id="user_id" name="user_id" required>
+                     
+                    </select>
+                  </div>
+                  </div>
+
+				 
+				  
+          <div class="form-group ">
+                      <label for="comments" class="col-md-3 control-label">Comments:</label>
+                      <div class="col-md-4 has-success">
+        <textarea spellcheck="true" class="form-control upper-control" id="comments" name="comments" placeholder="---Comments----" style="text-transform:uppercase" onblur="upper_str(this)"><?php echo set_value('comments'); ?></textarea>
+                      </div>
+                    </div>
+
+              <div class="form-group ">
+                      <label for="dispatch_no" class="col-md-3 control-label">Dispatch Number:</label>
+                      <div class="col-md-4 has-success">
+                     <textarea spellcheck="true" class="form-control upper-control" id="dispatch_no" name="dispatch_no" value="" style="text-transform:uppercase" onblur="upper_str(this)"></textarea>
+                      </div>
+                    </div>
+
+      <div class="form-group">
+                    <label for="actionable_id" class="col-md-3 control-label">Actionable<span style="color:red; font-size:20px">*</span>:</label>
+                    <div class="col-md-4 has-success">
+                    <select class="form-control" id="actionable_id" name="actionable_id" onchange="action_type()">
+                      <option value="Not Actionable">Non Actionable</option>
+                      <option value="Actionable">Actionable</option>
+                    </select>
+                  </div>
+                  </div>
+                   <div class="form-group" id="act_type" style="display:none">
+                    <label for="" class="col-md-3 control-label"></label>
+                    <div class="col-md-4 has-success">
+                    <input type="radio" name="actionable_name"  value="Discuss the Matter" onchange="action_text()">&nbsp;Discuss the Matter&nbsp;&nbsp;
+                    <input type="radio" name="actionable_name"  value="Send Report" onchange="action_text()">&nbsp;Send Report&nbsp;&nbsp;
+                    <input type="radio" name="actionable_name" id="others" value="others" onchange="action_text()">&nbsp;Others
+                  </div>
+                  </div>
+                  
+              <div class="form-group" id="act_text" style="display:none">
+                    <label for="act_name" class="col-md-3 control-label">Action:<span style="color:red; font-size:20px">*</span>:</label>
+                     <div class="col-md-4 has-success">
+                     <input type="text" class="form-control" id="act_name" name="act_name"  value="">
+                    </div>
+                  </div>
+ 
+         <div class="form-group" style="display:none" id="act_dt">
+                    <label for="deadline_dt" class="col-md-3 control-label">Deadline<span style="color:red; font-size:20px">*</span>:</label>
+                     <div class="col-md-4 has-success">
+                    <input class="datepicker form-control" data-date-format="mm/dd/yyyy" id="deadline_dt" name="deadline_dt" >
+                     </div>
+          </div>
+ 
+ <?php if(fetch_rank($this->session->userdata('user_id'))>=4){ ?>
+               <div class="form-group" style="display:none">
+                    <label for="department" class="col-md-3 control-label">Type of Attachment:</label>
+                    <div class="col-md-4 has-success">
+                    
+                    <input type="radio" value="0"  id="is_final" name="is_final" checked="checked">&nbsp;&nbsp;DRAFT               
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" value="1" name="is_final" id="is_final" >&nbsp;&nbsp;FINAL
+
+                  </div>
+                  </div>
+ <?php }  else{?>
+			<div class="form-group" style="display:none">
+                    <label for="department" class="col-md-3 control-label">Type of Attachment:</label>
+                    <div class="col-md-4 has-success">
+                    
+                    <input type="radio" value="0"  id="is_final" name="is_final" checked="checked">&nbsp;&nbsp;DRAFT               
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" value="1" name="is_final" id="is_final" >&nbsp;&nbsp;FINAL
+
+                  </div>
+                  </div>
+ <?php }?>
+				<!--<div class="form-group">
+					<label for="attachment" class="col-md-3 control-label inc1">Attachment:</label>
+						<div class="col-md-4">
+							<input type="file" *class="form-control" id="attachment" name="attachment" *onchange="check_double_ext();" >
+						</div>-->
+				<div class="form-group" style="display:none">
+                    <label for="department" class="col-md-3 control-label">Draft Report <span style="color:red; font-size:20px"></span>:</label>
+                    <div class="col-md-4 has-success">
+                    <input type="checkbox" value="draft" name="draft" id="draft" onclick="shownote()" >&nbsp;		
+				
+				  <div class="form-group attach_rep" id="attach_rep" style="display:none">
+													
+					<div class="col-md-12 has-success ">
+							<textarea spellcheck="true" class="form-control" id="note" name="note" *placeholder="---Notes----" style="height:200px; width:500px">
+							<?php if(isset($attachment) && count($attachment)>0){ echo($attachment[0]["content"]); }?>
+							</textarea>
+					</div>
+													
+				  </div>
+				  
+				
+				
+				</div>
+				
+			<!-- <div class="input_letter_wrap">
+			                       <button class="add_letter_button btn btn-primary">Add More Pages of Letter</button><br><br><br>
+				<div class="form-group">
+				<label for="attachment" class="inc1">&nbsp;&nbsp;&nbsp;&nbsp;Attachment</label>
+				<input type="file" class="form-control" id="attachment" name="attachment[]" *onchange="check_double_ext();" required>
+				</div>
+			              </div>    -->
+              </div>
+			  <div class="form-group">
+                  <input type="hidden" value="<?php echo $results[0]["letter_id"]; ?>" name="letter_id">
+                     
+                   <input type="hidden" value="<?php echo base_url(); ?>" id="base_url">
+                     <div class="col-md-4 widget-left">
+                  <input type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;" value='Submit' *onclick=" return msg_confim();" >
+				<input type="reset" class="btn btn-primary pull-right" value='Reset' style="margin-right: 5px;">
+                  
+
+                  </div>  
+                  
+                                
+               
+              </div>
+            </div>
+            </form>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div><!--/.row-->
+	<script>
+	
+		function receivertype(v,cls,id1,id2)
+		{
+			
+			if(document.getElementById(v).checked == true)
+			{
+				
+				$(cls).css({'display':'block'});	
+				$(cls).css({'disabled':'false'});	
+				document.getElementById(id1).disabled = false;
+				document.getElementById(id2).disabled = false;
+				
+				
+			}
+			else
+			{
+				$(cls).css({'display':'none'});	
+				$(cls).css({'disabled':'true'});
+				document.getElementById(id1).disabled = true;
+				document.getElementById(id2).disabled = true;
+				
+			}
+		}
+	
+	
+  
+	   function msg_confim(){
+			 var addr = $("#user_id").text();
+			
+			  return confirm("Do want to send File to " + addr + "?");
+			  
+		  
+			  
+		}
+   </script>
+    <script type="text/javascript">
+	function shownote(){
+		
+		if(document.getElementById("draft").checked==true){
+			//alert(document.getElementById("draft").checked);
+			document.getElementById("attach_rep").style.display="block";
+		}
+		else{
+			document.getElementById("attach_rep").style.display="none";
+		}
+	}
+
+$(document).ready(function(){
+    $(".section").change(function(){
+
+      var base_url=$("#base_url").val();
+      var token_name=$("#token_name").val();
+      var hash=$("#hash").val();
+       var designation=$("#designation").val();
+      var section=$("#section").val();
+      var url=base_url+"letter_inbox/fetch_emp_name/";
+       $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',designation:designation,section:section},
+           success: function(result){
+           
+         $("#user_id").html(result);
+    }});
+     
+  });
+});
+
+
+
+	function checkUserHasAccess()
+	{
+		var userId = $("#user_id").val();
+		if(userId > 0){
+			$.ajax({
+				url:'<?php echo base_url()."Letter_inbox/checkUserHasAccess"; ?>', 
+				type:'post',
+			data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>','userId': userId },
+			success: function(result){
+				var data = JSON.parse(result);
+				console.log(data);
+				if(data == 'denied')
+				{
+					if ( $("#actionable_id option[value='Request Approval']").length == 0 ){
+						var option = new Option('Request Approval', 'Request Approval'); 
+						$("#actionable_id").append($(option));
+					}
+					
+					$("#actionable_id option[value='Actionable']").remove();
+					$('#act_type').css('display','none');
+					$('#act_text').css('display','none');
+					$('#act_dt').css('display','none');
+				} else if(data == 'access')
+				{
+					if ( $("#actionable_id option[value='Actionable']").length == 0 ){
+						var option = new Option('Actionable', 'Actionable'); 
+						$("#actionable_id").append($(option));
+						$("#actionable_id option[value='Request Approval']").remove();
+					}
+				}
+			}});
+		}
+		
+	}
+
+ $(document).ready(function(){
+    $(".designation").change(function(){
+      var base_url=$("#base_url").val();
+      var token_name=$("#token_name").val();
+      var hash=$("#hash").val();
+      var designation=$("#designation").val();
+      var url=base_url+"letter_inbox/fetch_emp_name/";
+       $.ajax({url:url, 
+           type:'post',
+           data:{ '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>',designation:designation},
+           success: function(result){
+			$("#user_id").html(result);
+		 
+			checkUserHasAccess();
+    }});
+		
+  });
+  
+  $("#user_id").change(function(){
+		checkUserHasAccess();
+  });
+  
+  $('#actionable_id').on('change', function(){
+	  if($(this).val() == 'Request Approval')
+	  {
+			$('#request_approval').val(1);
+	  } else {
+		  $('#request_approval').val(0);
+	  }
+  });
+});
+
+    </script>
+   
