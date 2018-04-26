@@ -9,7 +9,7 @@
 		"wiki": "https://github.com/bcit-ci/CodeIgniter/wiki",
 		"irc": "irc://irc.freenode.net/codeigniter",
 		"source": "https://github.com/bcit-ci/CodeIgniter",
-		'driver' : "pdo"
+		"driver" : "pdo_pgsql_driver"
 	},
 	"require": {
 		"php": ">=5.2.4"
