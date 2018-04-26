@@ -1,5 +1,4 @@
 {
-	php composer.phar require "tinymce/tinymce" ">= 4"
 	"description": "The CodeIgniter framework",
 	"name": "codeigniter/framework",
 	"type": "project",
